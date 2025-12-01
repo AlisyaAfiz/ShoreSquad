@@ -31,6 +31,7 @@
             </div>
             <ul class="nav-menu">
                 <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#weather" class="nav-link">Weather</a></li>
                 <li><a href="#map" class="nav-link">Map</a></li>
                 <li><a href="#events" class="nav-link">Events</a></li>
                 <li><a href="#crew" class="nav-link">Crew</a></li>
@@ -94,6 +95,24 @@
                     <h3>Gamification</h3>
                     <p>Earn badges, climb the leaderboard, and celebrate your environmental wins together.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Weather Section -->
+    <section class="weather-section" id="weather" aria-label="Singapore weather forecast">
+        <div class="container">
+            <h2 class="section-title">4-Day Weather Forecast</h2>
+            <p class="section-subtitle">Plan your cleanup around the perfect weather</p>
+            <div class="weather-loader" id="weather-loader">
+                <div class="spinner"></div>
+                <p>Loading weather data...</p>
+            </div>
+            <div id="weather-container" class="weather-container">
+                <!-- Weather cards populated by JavaScript -->
+            </div>
+            <div id="weather-error" class="weather-error" style="display: none;">
+                <p>Unable to load weather data. Please try again later.</p>
             </div>
         </div>
     </section>

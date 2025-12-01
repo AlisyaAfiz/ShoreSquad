@@ -4,7 +4,7 @@
 
 // Configuration
 const CONFIG = {
-    apiBaseUrl: 'https://api.openweathermap.org/data/2.5',
+    neaWeatherApi: 'https://api-open.data.gov.sg/v1/environment/4-day-weather-forecast',
     mapCenter: [1.3521, 103.8198], // Singapore default
     mapZoom: 12,
     eventsUpdateInterval: 60000, // 1 minute
@@ -22,6 +22,9 @@ const getStartedBtn = document.getElementById('get-started-btn');
 const exploreBtn = document.getElementById('explore-btn');
 const geolocationBtn = document.getElementById('geolocation-btn');
 const locationSearch = document.getElementById('location-search');
+const weatherContainer = document.getElementById('weather-container');
+const weatherLoader = document.getElementById('weather-loader');
+const weatherError = document.getElementById('weather-error');
 
 // ===============================
 // State Management
@@ -183,6 +186,127 @@ function initGeolocation() {
             alert('Geolocation is not supported by your browser.');
         }
     });
+}
+
+// ===============================
+// Weather Management (NEA API)
+// ===============================
+async function loadWeather() {
+    try {
+        weatherLoader.style.display = 'block';
+        weatherError.style.display = 'none';
+        weatherContainer.innerHTML = '';
+
+        // Fetch 4-day forecast from NEA API
+        const response = await fetch(CONFIG.neaWeatherApi);
+        
+        if (!response.ok) {
+            throw new Error(`Weather API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        state.weather = data;
+
+        // Process and render weather data
+        renderWeather(data);
+        weatherLoader.style.display = 'none';
+
+        console.log('✅ Weather data loaded successfully');
+        window.announceToScreenReader?.('Weather forecast loaded');
+    } catch (error) {
+        console.error('Weather loading error:', error);
+        weatherLoader.style.display = 'none';
+        weatherError.style.display = 'block';
+        window.announceToScreenReader?.('Weather data failed to load');
+    }
+}
+
+function renderWeather(data) {
+    if (!data.items || data.items.length === 0) {
+        weatherContainer.innerHTML = '<p>No weather data available</p>';
+        return;
+    }
+
+    // Get the first forecast item which contains 4-day forecast
+    const forecasts = data.items[0].forecast;
+    
+    // Group forecasts by day and get conditions
+    const groupedByDay = {};
+    
+    forecasts.forEach(forecast => {
+        const date = forecast.date;
+        
+        if (!groupedByDay[date]) {
+            groupedByDay[date] = {
+                date: date,
+                forecasts: [],
+                conditions: new Set(),
+                rainProb: 0,
+            };
+        }
+        
+        groupedByDay[date].forecasts.push(forecast);
+        groupedByDay[date].conditions.add(forecast.forecast);
+        groupedByDay[date].rainProb = Math.max(groupedByDay[date].rainProb, forecast.relative_humidity);
+    });
+
+    // Get only first 4 days
+    const days = Object.keys(groupedByDay).slice(0, 4);
+    
+    weatherContainer.innerHTML = days.map((dateKey, index) => {
+        const dayData = groupedByDay[dateKey];
+        const date = new Date(dateKey);
+        const dayName = date.toLocaleDateString('en-SG', { weekday: 'short' });
+        const formattedDate = date.toLocaleDateString('en-SG', { day: 'numeric', month: 'short' });
+        
+        // Get primary weather condition
+        const conditions = Array.from(dayData.conditions);
+        const primaryCondition = conditions[0] || 'Clear';
+        const weatherIcon = getWeatherIcon(primaryCondition);
+        
+        // Calculate average humidity as proxy for rain probability
+        const rainProbability = dayData.rainProb;
+        
+        return `
+            <div class="weather-card" role="article" tabindex="0">
+                <div class="weather-date">${formattedDate}</div>
+                <div class="weather-day">${dayName}</div>
+                <div class="weather-icon">${weatherIcon}</div>
+                <div class="weather-condition">${primaryCondition}</div>
+                <div class="weather-details">
+                    <p style="margin: 0.5rem 0;">💧 Humidity: ${rainProbability}%</p>
+                    <p style="margin: 0.5rem 0;">${conditions.length > 1 ? '⚠️ Mixed conditions' : '✓ Consistent weather'}</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Add keyboard support
+    document.querySelectorAll('.weather-card').forEach(card => {
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                card.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+}
+
+function getWeatherIcon(condition) {
+    const condition_lower = condition.toLowerCase();
+    
+    if (condition_lower.includes('rain') || condition_lower.includes('thunderstorm')) {
+        return '🌧️';
+    } else if (condition_lower.includes('cloud')) {
+        return '☁️';
+    } else if (condition_lower.includes('clear') || condition_lower.includes('sunny')) {
+        return '☀️';
+    } else if (condition_lower.includes('wind')) {
+        return '💨';
+    } else if (condition_lower.includes('mist') || condition_lower.includes('fog')) {
+        return '🌫️';
+    } else {
+        return '🌤️';
+    }
 }
 
 // ===============================
@@ -408,6 +532,7 @@ function init() {
     lazyLoadImages();
 
     // Load data
+    loadWeather();
     loadEvents();
     loadCrew();
 

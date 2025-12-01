@@ -298,6 +298,119 @@ section {
 }
 
 /* ===============================
+   Weather Section
+   =============================== */
+.weather-section {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #0056a3 100%);
+    color: white;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.weather-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.weather-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.weather-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-3px);
+}
+
+.weather-date {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.weather-day {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-bottom: 1rem;
+}
+
+.weather-icon {
+    font-size: 3rem;
+    margin: 1rem 0;
+    display: block;
+}
+
+.weather-condition {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    font-weight: 500;
+}
+
+.weather-temp {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+.weather-rain-prob {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
+}
+
+.weather-details {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+}
+
+.weather-loader {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: white;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.weather-error {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    color: white;
+}
+
+/* ===============================
    Map Section
    =============================== */
 .map-section {
@@ -339,6 +452,15 @@ section {
     outline: none;
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.1);
+}
+
+/* ===============================
+   Map Section (OLD - keeping for reference)
+   =============================== */
+.feature-card p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
 /* ===============================
