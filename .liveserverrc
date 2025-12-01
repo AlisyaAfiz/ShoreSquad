@@ -1,0 +1,10 @@
+{
+  "host": "127.0.0.1",
+  "port": 5500,
+  "root": "ShoreSquad",
+  "ignore": ["node_modules", ".git"],
+  "file": "index.html",
+  "wait": 1000,
+  "mount": [],
+  "showUrl": true
+}
